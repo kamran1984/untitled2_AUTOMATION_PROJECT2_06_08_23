@@ -1,5 +1,6 @@
 package org.example;//package org.example;
 //
+import java.time.Duration;
 import java.util.Random;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -13,6 +14,7 @@ public class Main {
 
         WebDriver driver = new ChromeDriver();
         driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(6));
         driver.navigate().to("http://secure.smartbearsoftware.com/samples/TestComplete12/WebOrders/Login.aspx");
 
         String expected1 = "Web Orders Login";
@@ -24,7 +26,7 @@ public class Main {
         driver.findElement(By.id("ctl00_MainContent_password")).sendKeys("test");
 
 
-       Thread.sleep(500);
+
         driver.findElement(By.id("ctl00_MainContent_login_button")).click();
 
        driver.findElement(By.xpath("//a[@href=\"Process.aspx\"]")).click();
@@ -42,28 +44,6 @@ public class Main {
         System.out.println(attribute);
 
 
-
-        String expected2 = driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_txtTotal']")).getAttribute("value");
-        String actual2 = driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_txtTotal']")).getAttribute("value");
-        Assert.assertEquals(actual2,expected2);
-
-//        String alphabet = "QWERTYUIOPLKJHGFDSAZXCVBNM";
-//        String str1 = "";
-//        String str2 = "";
-//        int num = (int)(4+Math.random()*10);
-//        for (int i = 0; i < num; i++) {
-//            int firstName =(int)(Math.random()*alphabet.length());
-//            int lastName =(int)(Math.random()*alphabet.length());
-//
-//            str1+= alphabet.charAt(firstName);
-//            str2+= alphabet.charAt(lastName);
-//        }
-
-
-
-
-
-
                 String[] firstNames = {
                         "John", "Jane", "Michael", "Emily", "William", "Olivia", "James", "Emma", "Alexander", "Sophia"
                 };
@@ -72,11 +52,11 @@ public class Main {
                         "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"
                 };
         String[] streets = {
-               " Main Street.","2nd Street."," 3rd Street.","4th Street.","5th Street.","6th Street.","7th Street.","1st Street."
+               "Main Street.","2nd Street.","3rd Street.","4th Street.","5th Street.","6th Street.","7th Street.","1st Street."
         };
 
 
-        String[] citys ={"New York"," Los Angeles"," Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas",  "San Jose"};
+        String[] citys ={"New   York","Los   Angeles","Chicago", "Houston", "Phoenix", "Philadelphia", "San   Antonio", "San   Diego", "Dallas",  "San   Jose"};
 
         String[] usStates = {
                 "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
@@ -135,29 +115,82 @@ public class Main {
         int cardTypeIndex = random.nextInt(cardTypes.length);
         String cardType = cardTypes[cardTypeIndex];
         driver.findElement(By.xpath(cardType)).click();
-
+int visaCardNumber = (int) (Math.random()*10000000000000000l);
+int masterCardNumber = (int) (Math.random()*10000000000000000l);
+int americanExpressCardNumber = (int) (Math.random()*1000000000000000l);
         if(cardType.equals("//input[@id='ctl00_MainContent_fmwOrder_cardList_0']")){
-            driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox6']")).sendKeys("4"+(long)(Math.random()*10000000000000000l));
+            driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox6']")).sendKeys("4"+visaCardNumber);
         }else if(cardType.equals("//input[@id='ctl00_MainContent_fmwOrder_cardList_1']")){
-            driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox6']")).sendKeys("5"+(long)(Math.random()*10000000000000000l));
+            driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox6']")).sendKeys("5"+masterCardNumber);
         }else {
-            driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox6']")).sendKeys("3"+(long)(Math.random()*1000000000000000l));
+            driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox6']")).sendKeys("3"+americanExpressCardNumber);
         }
 
 
 
-        driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox1']")).sendKeys("06/2023");
+        driver.findElement(By.xpath("//input[@id='ctl00_MainContent_fmwOrder_TextBox1']")).sendKeys("06/2028");
 
         Thread.sleep(1000);
         driver.findElement(By.xpath("//a[@id='ctl00_MainContent_fmwOrder_InsertButton']")).click();
 
 
-//        String expected3 = "New order has been successfully added";
-//        String actual3 = driver.getTitle();
-//        Assert.assertEquals(actual3,expected3);
+
+
+          driver.findElement(By.xpath("//div[@class='buttons_process']//strong")).isDisplayed();
+
+          driver.findElement(By.xpath("//a[text()='View all orders']")).isDisplayed();
+          driver.findElement(By.xpath("//a[text()='View all orders']")).click();
+
+
+          String name =firstAndLastName;
+          String Street =street;
+          String City =city;
+          String State =state;
+          String Zip =zipcode;
+          String Cardtype =cardType;
+
+
+        Thread.sleep(500);
+        String actualName = driver.findElement(By.xpath("(//td[text()='MyMoney']//preceding-sibling::td)[2]")).getText().replace(" ","      ");
+        Assert.assertEquals(actualName,name);
+
+        Thread.sleep(500);
+        String actualStreet = driver.findElement(By.cssSelector("td:nth-child(6)")).getText().replace("   ","");
+        Assert.assertEquals(actualStreet,Street);
+
+        Thread.sleep(500);
+        String actualCity = driver.findElement(By.cssSelector("td:nth-child(7)")).getText().replace(" ","   ");
+        Assert.assertEquals(actualCity,City);
+
+        Thread.sleep(500);
+        String actualState = driver.findElement(By.cssSelector("td:nth-child(8)")).getText();
+        Assert.assertEquals(actualState,State);
+
+        Thread.sleep(500);
+        String actualZip = driver.findElement(By.cssSelector("td:nth-child(9)")).getText();
+        Assert.assertEquals(actualZip,Zip);
 
 
 
+         String expectedvisacardnumbervisa ="4"+visaCardNumber;
+         String expectedvisacardnumbermaster ="5"+masterCardNumber;
+         String expectedvisacardnumberamericanexpress ="3"+americanExpressCardNumber;
+
+        if(cardType.equals("//input[@id='ctl00_MainContent_fmwOrder_cardList_0']")) {
+            String actualCardnumber = driver.findElement(By.cssSelector("td:nth-child(11)")).getText();
+            Assert.assertEquals(actualCardnumber, expectedvisacardnumbervisa);
+
+        } else if (cardType.equals("//input[@id='ctl00_MainContent_fmwOrder_cardList_1']")) {
+            String actualCardnumber = driver.findElement(By.cssSelector("td:nth-child(11)")).getText();
+            Assert.assertEquals(actualCardnumber, expectedvisacardnumbermaster);
+
+        } else {
+            String actualCardnumber = driver.findElement(By.cssSelector("td:nth-child(11)")).getText();
+            Assert.assertEquals(actualCardnumber, expectedvisacardnumberamericanexpress);
+        }
+
+        driver.findElement(By.xpath("//a[@id='ctl00_logout']")).click();
+        driver.quit();
     }
 
 
